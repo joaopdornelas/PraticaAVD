@@ -1,0 +1,16 @@
+{
+  "source_filename": "netflix_content_intelligence_combined.csv",
+  "source_sha256": "f137fd53db262edcfba18fc09f6b3a8723a5a7759ef89036dbc0428bc87b030d",
+  "notebook_url": "https://colab.research.google.com/drive/1LBwfll2VYpDFk61nXW9KonxWqa0oK7wt",
+  "rows": 7786,
+  "original_columns": 40,
+  "treated_columns": 42,
+  "transformations": {
+    "tipo_conteudo": "Movie -> Filme; TV Show -> Série",
+    "imdb_votes_log": "numpy.log1p(imdb_votes)"
+  },
+  "missing_values": "preserved",
+  "outliers": "preserved",
+  "original_public_url": null,
+  "license": null
+}
