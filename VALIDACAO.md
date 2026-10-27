@@ -1,29 +1,34 @@
-# Validação da entrega
+# Validação — Aulas 21 e 22
 
-Executada em 25/10/2026, com Python 3.12, Streamlit 1.66.1, pandas 2.3.3 e NumPy 2.5.4.
+Atualizada em 27/10/2026. Python 3.12, Streamlit 1.66.1, pandas 2.3.3, NumPy 2.5.4 e Altair 6.3.
 
-- Notebook `notebooks/eda.ipynb`: todas as células executadas, sem erros. Resultados e gráficos salvos no próprio notebook.
-- Exportação bruta: 7.786 linhas e 40 colunas. Comparação com o CSV fornecido pelo aluno aprovada.
-- Exportação tratada: 7.786 linhas e 42 colunas. Comparação com o dataset tratado anteriormente aprovada (tolerância numérica de 1e-12 na reexportação).
-- Testes automatizados: 3 aprovados, incluindo preservação dos 7.786 títulos e 2.326 ausências IMDb no estado inicial, escolha explícita sobre ausências e interação da interface com seleções vazias, uma variável, mudança de intervalo e nenhum título resultante.
-- Rascunho de layout inspecionado visualmente.
-- Dados brutos ignorados pelo Git conforme o modelo; CSV tratado incluído no versionamento.
+## Verificações concluídas
 
-O aplicativo foi testado com AppTest, que executa o Streamlit sem abrir um servidor. Não foi realizado deploy no Streamlit Community Cloud.
+- Sete testes automatizados aprovados novamente na pasta do VS Code, com seu próprio ambiente `.venv`: `python -m unittest discover -s tests -v` (5,830 segundos, em 27/10/2026).
+- Correlação: pares válidos, relação inversa conhecida e variável constante. Histogramas: intervalos comuns, contagens preservadas e percentuais por grupo, com e sem transformação logarítmica.
+- Indicadores: conferência dos totais, seleção de categorias, ausência de notas e recorte vazio.
+- AppTest: duas abas, filtros compartilhados, zero/uma/duas variáveis, intervalo, remoção de ausentes, nenhum título, separação por tipo, log, agrupamento e botão de limpeza sem exceções.
+- `notebooks/metricas.ipynb` executado integralmente com resultados e gráficos salvos, sem erros. Fórmulas conferidas por cálculos independentes.
+- `notebooks/eda.ipynb` preserva exatamente o notebook original do aluno. A versão adaptada e executada na Aula 21 foi mantida em `notebooks/eda-com-downloads.ipynb`.
+- Dataset tratado preservado: 7.786 linhas e 42 colunas; 5.460 notas IMDb disponíveis, mediana 6,5 e 2.410 séries. Ausências não foram substituídas por zero.
+- Rascunho do Dashboard 2 criado antes da implementação e inspecionado visualmente.
+- Servidor local respondeu `ok` na rota de saúde. A conferência visual do aplicativo pelo navegador automatizado não foi concluída porque a ferramenta não respondeu; os testes de interface foram realizados com AppTest. O clique real nas barras ainda deve ser conferido pelo aluno no navegador.
 
-As instruções oficiais incluídas no pacote Streamlit foram consultadas diretamente. A instalação automática das skills por symlink não foi concluída devido às permissões do Windows; não foram alteradas configurações do sistema.
-
-## Correspondência com a Aula 21
+## Correspondência com a Aula 22
 
 | Requisito | Evidência |
 | --- | --- |
-| Utilizar a EDA própria (p. 3) | `notebooks/eda.ipynb`, adaptado do Colab do aluno |
-| Planejar o layout (p. 15–16) | `prompts/rascunho_dashboard1.png`, criado antes do app |
-| Prompt estruturado (p. 18) | `prompts/layout-skeleton-prompt.md` |
-| Seletor de variáveis (p. 21) | Multisseleção de cinco variáveis quantitativas |
-| Filtro de intervalo (p. 21) | Seletor de variável e slider |
-| Áreas de correlação/distribuição (p. 21) | Dois containers com placeholders e TODOs |
-| Exportar bruto e tratado (p. 22) | Célula final de exportação e arquivos em `data/` |
-| Commit e push (p. 22) | Commit local preparado; push depende do repositório pessoal |
+| Dashboard 1 com gráficos e filtros | Matriz de Spearman e histograma em `app.py` e `src/` |
+| Casos de zero, uma e várias variáveis | `tests/test_app.py` |
+| Identidade visual | `.streamlit/config.toml`, vermelho, azul e neutros |
+| Planejar 3–5 métricas e justificá-las | Quatro métricas em `entregas/justificativa-metricas.md` |
+| Experimentar métricas e visuais no notebook | `notebooks/metricas.ipynb` |
+| Rascunhar Dashboard 2 | `entregas/rascunho-dashboard2.jpg` |
+| Duas abas e agrupamento categórico | Agrupamento por gênero, país ou tipo |
+| Interação Altair | Seleção nas barras refina indicadores e gráfico por década |
+| Atualizar roteiro e organização | `ROTEIRO.md`, `ALTAIR-CROSSFILTER.md`, `entregas/` e `prompts/` |
+| Declarar uso de IA | `prompts/declaracao-uso-ia.md` |
 
-O aluno ainda deve preencher seu nome e registrar a revisão humana na declaração de IA. O destino GitHub e a fonte pública/licença original do dataset não foram informados.
+## Pendências para entrega
+
+Repositório: https://github.com/joaopdornelas/PraticaAVD. O aluno autorizou o commit e o push da parte 2 em 27/10/2026. O aluno deve preencher seu nome e registrar sua revisão humana na declaração de IA. A fonte pública e a licença original do dataset também devem ser documentadas. Não foi feito deploy; essa etapa está prevista para a Aula 23.

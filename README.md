@@ -1,14 +1,10 @@
-# Netflix: análise exploratória e Streamlit
+# Netflix: correlação, distribuições e indicadores
 
-Entrega da Aula 21 de Análise e Visualização de Dados (2026.2), baseada no repositório-modelo https://github.com/mfal-school/AVD-20262-pratica-streamlit e no PDF “Aula 21 - Streamlit parte 1”.
-
-## Escopo desta entrega
-
-Conforme as páginas 18, 21 e 22 do PDF: layout, widgets e espaços reservados para os gráficos do Dashboard 1. Heatmap, histograma e Dashboard 2 de KPIs pertencem à próxima etapa. Os filtros já funcionam sobre o CSV tratado.
+Projeto das Aulas 21 e 22 de Análise e Visualização de Dados, 2026.2. Modelo: https://github.com/mfal-school/AVD-20262-pratica-streamlit (atualização consultada: `c8844b4`). Requisitos: PDFs das Aulas 21 e 22 e `ROTEIRO.md`.
 
 ## Executar no Windows
 
-Use Python 3.12 (versão utilizada na validação).
+Python 3.12 utilizado na validação. Na pasta que contém `app.py`:
 
 ```powershell
 py -3.12 -m venv .venv
@@ -16,47 +12,43 @@ py -3.12 -m venv .venv
 .venv\Scripts\python.exe -m streamlit run app.py
 ```
 
-No macOS/Linux, use `python3 -m venv .venv`, depois `.venv/bin/python -m pip install -r requirements.txt` e `.venv/bin/python -m streamlit run app.py`.
+Nas próximas execuções, basta o último comando. No macOS/Linux, use `python3` e `.venv/bin/python` no lugar dos caminhos Windows.
 
-Para configurar as instruções de IA do Streamlit, execute `python -m streamlit skills --yes` no ambiente do projeto.
+## Os dois dashboards
 
-## Dados e reprodução
+**Correlação e distribuição:** matriz de Spearman e histogramas interativos em Altair. Os filtros recalculam ambos. A matriz mostra o número de pares válidos no hover e indica coeficientes indefinidos. Na comparação por tipo, os histogramas usam intervalos iguais e percentuais por grupo. Votos e popularidade podem ser visualizados em log(1 + valor), sem modificar os dados.
 
-- Entrada: `netflix_content_intelligence_combined.csv`, fornecido pelo aluno, com 7.786 linhas e 40 colunas.
-- Bruto local: `data/raw/dataset.csv` (incluído no pacote local, ignorado pelo Git, conforme o modelo).
-- Tratado: `data/clean/dataset.csv`, com 7.786 linhas e 42 colunas, incluído no Git.
-- Notebook: `notebooks/eda.ipynb`. Execute todas as células usando o ambiente acima. Pode ser aberto localmente no VS Code/Jupyter ou no Colab. No Colab, se o bruto não existir, a célula de carregamento solicita upload do CSV original.
-- A última célula de código exporta os dados brutos e tratados. Execute a EDA completa antes de exportar.
+**Indicadores do catálogo:** quatro cartões (total, cobertura IMDb, mediana IMDb e participação de séries). Barras agrupadas por gênero, país ou tipo permitem selecionar categorias e atualizar os cartões e o gráfico de lançamentos por década. Clique seleciona, Shift + clique seleciona várias categorias, e duplo clique ou o botão limpa. Os filtros gerais afetam as duas abas; seleção das barras refina somente a segunda.
 
-Tratamento reproduzido: `type` é mapeado para `tipo_conteudo` (Filme/Série) e `imdb_votes_log = log1p(imdb_votes)`. Não houve remoção de títulos, imputação ou exclusão de extremos. O subconjunto `df_notas` possui 5.331 registros e é usado apenas nas comparações que exigem ambas as notas.
+## Notebooks e dados
+
+- `notebooks/eda.ipynb`: cópia exata do Colab original do aluno, preservada conforme o roteiro atualizado. O carregamento original usa upload manual.
+- `notebooks/eda-com-downloads.ipynb`: versão adaptada da EDA do aluno para execução local/Colab e exportação. Execute todas as células para gerar `data/raw/dataset.csv` e `data/clean/dataset.csv`.
+- `notebooks/arquivo-eda-original.ipynb`: referência da professora, mantida.
+- `notebooks/metricas.ipynb`: planejamento, fórmulas, conferências e visuais prévios do Dashboard 2.
+- `data/raw/dataset.csv`: original local, incluído no ZIP, ignorado pelo Git como no modelo.
+- `data/clean/dataset.csv`: base usada pelo aplicativo e versionada. 7.786 linhas e 42 colunas.
+
+A EDA mantém todos os títulos, ausências e extremos. Acrescenta `tipo_conteudo` (Filme/Série) e `imdb_votes_log`. A base principal é `df`; `df_notas` é apenas o subconjunto de 5.331 títulos com as duas notas.
 
 Fonte do notebook: https://colab.research.google.com/drive/1LBwfll2VYpDFk61nXW9KonxWqa0oK7wt
 
-O endereço público original do dataset e sua licença não foram fornecidos. Esses campos devem ser documentados pelo aluno antes de tornar a base pública. Os dados descrevem uma base histórica, com lançamentos até 2021, e não o catálogo atual.
+CSV original fornecido pelo aluno: `netflix_content_intelligence_combined.csv`. Proveniência em `data/proveniencia.json`. A fonte pública original e a licença ainda precisam ser documentadas. Os lançamentos vão até 2021; esta base não descreve o catálogo atual da Netflix.
 
-## Organização
+## Entregáveis e documentação
 
-| Arquivo | Função |
-| --- | --- |
-| `app.py` | Layout, widgets, contagem e prévia dos títulos filtrados |
-| `src/data_loader.py` | Leitura com cache apenas do CSV tratado |
-| `src/filters.py` | Aplicação dos filtros sem alterar o dataset |
-| `notebooks/eda.ipynb` | EDA do aluno adaptada com exportação reproduzível |
-| `prompts/rascunho_dashboard1.png` | Rascunho de layout criado antes do aplicativo |
-| `prompts/layout-skeleton-prompt.md` | Especificação estruturada usada na implementação |
-| `prompts/declaracao-uso-ia.md` | Registro do apoio de IA e decisões adotadas |
-| `tests/test_app.py` | Verificação de filtros, ausências e estados vazios |
+- `entregas/rascunho-dashboard1.png` e `entregas/rascunho-dashboard2.jpg`.
+- `entregas/justificativa-metricas.md`: variáveis, finalidade, público, decisões, fórmulas e limites dos quatro indicadores.
+- `prompts/`: somente material relacionado ao uso de IA.
+- `ROTEIRO.md` e `ALTAIR-CROSSFILTER.md`: guias atualizados da professora.
+- `VALIDACAO.md`: verificações e situação de entrega.
 
-## Decisões sobre os filtros
+## Testar
 
-Selecionar variáveis escolhe o conteúdo dos futuros gráficos. O seletor do intervalo determina qual variável filtra os títulos. Por padrão, o intervalo de ano inclui todos os registros. Ausências são mantidas por padrão e podem ser excluídas explicitamente. A prévia mostra no máximo 100 linhas; a contagem considera todos os títulos filtrados.
+```powershell
+.venv\Scripts\python.exe -m unittest discover -s tests -v
+```
 
-## Verificação
+## Publicação
 
-Na raiz, execute `python -m unittest discover -s tests -v`.
-
-## Entrega no GitHub
-
-O repositório pessoal de destino ainda não foi informado. A preparação local não representa envio ao GitHub ou entrega no Classroom. O histórico original do modelo foi preservado. `data/raw` fica fora do Git; o notebook, o CSV tratado, o aplicativo, o rascunho e os registros de IA compõem a entrega versionada.
-
-Para publicar quando o destino estiver definido, configure seu repositório pessoal como `origin` e faça push da branch da entrega. Não envie alterações diretamente ao repositório da professora.
+Repositório: https://github.com/joaopdornelas/PraticaAVD. O aluno autorizou o commit e o envio da parte 2 ao GitHub em 27/10/2026. O deploy no Streamlit Community Cloud é a etapa da Aula 23. O aluno ainda deve preencher seu nome e registrar sua revisão na declaração de IA.

@@ -7,6 +7,24 @@ from src.filters import filter_data
 
 
 class FiltersTest(unittest.TestCase):
+    def test_two_dashboards_and_shared_filter(self):
+        at = AppTest.from_file(str(Path(__file__).resolve().parents[1] / 'app.py'), default_timeout=60).run()
+        self.assertEqual(len(at.exception), 0)
+        self.assertEqual(len(at.tabs), 2)
+        self.assertEqual(at.metric[0].value, '7.786')
+        self.assertEqual(at.metric[1].value, '70,1%')
+        self.assertEqual(at.metric[2].value, '6,5')
+        at.multiselect(key='tipos').set_value(['Série']).run()
+        self.assertEqual(at.metric[0].value, '2.410')
+        self.assertEqual(at.metric[3].value, '100,0%')
+        at.multiselect(key='variaveis').set_value(['imdb_rating', 'imdb_votes']).run()
+        at.toggle(key='separar_por_tipo').set_value(True).run()
+        at.selectbox(key='distribuicao').set_value('imdb_votes').run()
+        at.checkbox(key='hist_log').check().run()
+        at.selectbox(key='kpi_group').set_value('primary_country').run()
+        at.button(key='clear_categories').click().run()
+        self.assertEqual(len(at.exception), 0)
+
     def test_defaults_preserve_all_titles_and_missing_ratings(self):
         df = load_data()
         result = filter_data(df, ["Filme", "Série"], "release_year", (int(df.release_year.min()), int(df.release_year.max())))
@@ -22,7 +40,7 @@ class FiltersTest(unittest.TestCase):
         self.assertEqual(len(df), 7786)
 
     def test_ui_empty_and_single_variable(self):
-        at = AppTest.from_file(str(Path(__file__).resolve().parents[1] / 'app.py'), default_timeout=30).run()
+        at = AppTest.from_file(str(Path(__file__).resolve().parents[1] / 'app.py'), default_timeout=60).run()
         self.assertEqual(len(at.exception), 0)
         at.multiselect(key='variaveis').set_value([]).run()
         self.assertEqual(len(at.exception), 0)

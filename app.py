@@ -1,16 +1,12 @@
-"""Aula 21: estrutura e filtros do Dashboard 1 da Netflix."""
+"""Aulas 21 e 22: exploração e indicadores da base histórica Netflix."""
+import hashlib
 import streamlit as st
 from src.data_loader import load_data
 from src.filters import filter_data
+from src.analytics import LABELS, GROUPS, correlation_data, histogram_data, calculate_metrics, category_counts, select_categories, decade_counts
+from src.charts import heatmap, histogram, category_bar, decade_bar
 
 st.set_page_config(page_title="Netflix | Explorar o catálogo", layout="wide")
-LABELS = {
-    "release_year": "Ano de lançamento",
-    "imdb_rating": "Nota IMDb",
-    "imdb_votes": "Quantidade de votos IMDb",
-    "tmdb_rating": "Nota TMDb",
-    "tmdb_popularity": "Popularidade TMDb",
-}
 VARS_QUANT = list(LABELS)
 st.title("Netflix: explorar o catálogo")
 st.caption("Filmes e séries · Avaliações IMDb e TMDb · Base histórica com lançamentos até 2021")
@@ -26,7 +22,7 @@ with st.sidebar:
     variaveis = st.multiselect(
         "Variáveis quantitativas", VARS_QUANT, default=VARS_QUANT,
         format_func=LABELS.get, key="variaveis",
-        help="Escolha as variáveis que serão usadas na correlação e na distribuição.",
+        help="Escolha as variáveis do Dashboard 1. Os filtros gerais também afetam os indicadores.",
     )
     filtro = st.selectbox(
         "Variável para filtrar por intervalo", VARS_QUANT,
@@ -61,41 +57,97 @@ st.caption(f"{len(df_filtrado):,} de {len(df):,} títulos após os filtros.".rep
 if df_filtrado.empty:
     st.warning("Nenhum título corresponde aos filtros. Amplie o intervalo ou selecione um tipo de conteúdo.")
 
-col_correlacao, col_distribuicao = st.columns([1, 1.5])
-with col_correlacao:
-    with st.container(border=True):
-        st.subheader("Correlação")
+tab1, tab2 = st.tabs(["Correlação e distribuição", "Indicadores do catálogo"])
+
+with tab1:
+    col_correlacao, col_distribuicao = st.columns([1, 1.35])
+    with col_correlacao:
+        st.subheader("Como as variáveis se relacionam?")
         if len(variaveis) < 2:
             st.warning("Selecione pelo menos duas variáveis para a correlação.")
+        elif df_filtrado.empty:
+            st.info("Sem títulos para calcular a correlação.")
         else:
-            st.info("Área reservada para a matriz de correlação de Spearman.")
-            st.caption("Cada par utilizará os títulos com os dois valores disponíveis.")
-        # TODO Aula 22: df_filtrado[variaveis].corr(method="spearman").
-        # TODO Aula 22: heatmap com escala fixa de -1 a 1 e quantidade por par.
-
-with col_distribuicao:
-    with st.container(border=True):
-        st.subheader("Distribuição")
+            correlations = correlation_data(df_filtrado, variaveis)
+            st.altair_chart(heatmap(correlations, variaveis), width="stretch",
+                            alt="Matriz de correlação de Spearman das variáveis selecionadas")
+            st.caption("Spearman, de −1 a 1. Passe o cursor para consultar o número de pares válidos. ‘—’ indica menos de dois pares ou variável constante no par.")
+            st.caption("Associação não demonstra causalidade. Cada par pode usar um conjunto diferente de títulos.")
+    with col_distribuicao:
+        st.subheader("Como os valores se distribuem?")
         if variaveis:
-            distribuicao = st.selectbox(
-                "Variável da distribuição", variaveis, format_func=LABELS.get,
-                key="distribuicao",
-            )
-            n = df_filtrado[distribuicao].notna().sum()
-            st.info("Área reservada para o histograma.")
-            st.caption(f"{n} títulos com valor disponível para esta variável.")
-            if separar_por_tipo:
-                st.caption("Comparação planejada: filmes e séries em cores distintas e percentuais por grupo.")
-            # TODO Aula 22: histograma usando distribuicao e df_filtrado.
-            # Usar intervalos iguais por grupo, ausências excluídas só deste gráfico.
+            distribuicao = st.selectbox("Variável da distribuição", variaveis,
+                                       format_func=LABELS.get, key="distribuicao")
+            bins = st.slider("Quantidade de intervalos do histograma", 5, 60, 25, key="hist_bins")
+            log = st.checkbox("Visualizar em log(1 + valor)", key="hist_log") if distribuicao in ['imdb_votes', 'tmdb_popularity'] else False
+            hist = histogram_data(df_filtrado, distribuicao, bins, separar_por_tipo, log)
+            if hist.empty:
+                st.info("Não há valores disponíveis para o histograma neste recorte.")
+            else:
+                st.altair_chart(histogram(hist, distribuicao, separar_por_tipo, log), width="stretch",
+                                alt="Histograma da variável selecionada, com cores por tipo quando solicitado")
+                n = int(df_filtrado[distribuicao].notna().sum())
+                st.caption(f"{n} títulos com valor disponível; {len(df_filtrado)-n} sem valor ficam fora deste gráfico.")
+                if separar_por_tipo:
+                    st.caption("Mesmos intervalos para os grupos. Cada grupo soma 100%, evitando confundir seu tamanho com o formato da distribuição.")
+                if log:
+                    st.caption("Somente a escala do histograma foi transformada. Os filtros, os dados e os indicadores continuam nas unidades originais.")
         else:
             st.warning("Selecione uma variável quantitativa para a distribuição.")
 
-with st.expander("Ver os dados filtrados"):
+with tab2:
+    st.subheader("Composição e avaliações do recorte")
+    st.caption("Para explorar a composição desta base histórica e avaliar a cobertura das notas.")
+    slots = st.container()
+    controls, clear = st.columns([3, 1], vertical_alignment="bottom")
+    with controls:
+        group = st.selectbox("Agrupar títulos por", list(GROUPS), format_func=GROUPS.get, key="kpi_group")
+    with clear:
+        if st.button("Limpar seleção das barras", key="clear_categories"):
+            st.session_state['selection_version'] = st.session_state.get('selection_version', 0) + 1
+    bar_col, detail_col = st.columns([1.3, 1])
+    selections = []
+    with bar_col:
+        st.markdown("**Títulos por categoria**")
+        if df_filtrado.empty:
+            st.info("Sem títulos para agrupar.")
+        else:
+            grouped = category_counts(df_filtrado, group)
+            digest = hashlib.sha1(','.join(map(str, df_filtrado.index)).encode()).hexdigest()[:12]
+            chart_key = f"categories_{group}_{digest}_{st.session_state.get('selection_version', 0)}"
+            event = st.altair_chart(category_bar(grouped), key=chart_key, on_select="rerun",
+                                    selection_mode=['categorias'], width="stretch",
+                                    alt="Barras selecionáveis: clique para filtrar os indicadores e o gráfico por década")
+            selections = event.selection.get('categorias', [])
+            st.caption(f"Até 10 maiores categorias: {int(grouped.titulos.sum())} de {len(df_filtrado)} títulos dos filtros gerais. As barras permanecem como contexto durante a seleção.")
+            st.caption("Clique para selecionar; Shift + clique para várias categorias; duplo clique ou botão para limpar.")
+    selected = select_categories(df_filtrado, group, selections)
+    metrics = calculate_metrics(selected)
+    with slots:
+        cols = st.columns(4)
+        cols[0].metric("Títulos no recorte", f"{metrics['total']:,}".replace(',', '.'), border=True)
+        cols[1].metric("Com nota IMDb", '—' if metrics['cobertura'] is None else f"{metrics['cobertura']:.1%}".replace('.', ','), border=True,
+                       help="Títulos com nota IMDb divididos pelo total do recorte, incluindo os sem nota no denominador.")
+        cols[2].metric("Nota IMDb mediana", '—' if metrics['mediana'] is None else f"{metrics['mediana']:.1f}".replace('.', ','), border=True,
+                       help="Mediana das notas disponíveis, na escala de 0 a 10. Valores ausentes não recebem zero.")
+        cols[3].metric("Participação de séries", '—' if metrics['proporcao_series'] is None else f"{metrics['proporcao_series']:.1%}".replace('.', ','), border=True,
+                       help="Quantidade de séries dividida pelo total de títulos do recorte.")
+        if selections:
+            st.caption("Categorias selecionadas: " + ', '.join(item['categoria'] for item in selections))
+        else:
+            st.caption("Sem seleção nas barras: indicadores referentes a todos os títulos dos filtros gerais.")
+        st.caption(f"A mediana utiliza {metrics['avaliados']} avaliações disponíveis. A cobertura desigual entre grupos limita a comparação.")
+    with detail_col:
+        st.markdown("**Títulos por década de lançamento**")
+        if selected.empty:
+            st.info("Sem títulos para este recorte.")
+        else:
+            st.altair_chart(decade_bar(decade_counts(selected)), width="stretch",
+                            alt="Quantidade de filmes e séries por década no recorte selecionado")
+            st.caption("Década do lançamento dos títulos, não crescimento histórico do catálogo.")
+
+with st.expander("Ver os dados dos filtros gerais"):
     colunas = ["title", "tipo_conteudo", *variaveis]
-    previa = df_filtrado[colunas].head(100).rename(
-        columns={"title": "Título", "tipo_conteudo": "Tipo de conteúdo", **LABELS}
-    )
-    st.dataframe(previa, hide_index=True, width="stretch", alt="Prévia dos títulos da Netflix após os filtros")
-    st.caption("Prévia de até 100 títulos. Os filtros consideram a base completa.")
-st.caption("Aula 21: layout e filtros. Os gráficos e o Dashboard 2 de indicadores serão desenvolvidos na próxima etapa.")
+    previa = df_filtrado[colunas].head(100).rename(columns={"title": "Título", "tipo_conteudo": "Tipo de conteúdo", **LABELS})
+    st.dataframe(previa, hide_index=True, width="stretch", alt="Prévia dos títulos após os filtros gerais")
+    st.caption("Até 100 linhas. A seleção nas barras refina apenas a aba Indicadores do catálogo.")

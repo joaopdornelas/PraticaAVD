@@ -8,7 +8,7 @@ Construir a entrega da Aula 21 da disciplina Análise e Visualização de Dados.
 
 ## Entrada
 
-Rascunho criado antes do app: `prompts/rascunho_dashboard1.png`. Sidebar com tipos de conteúdo, seleção múltipla de variáveis, variável de intervalo, slider e opção de manter ausências. Área principal com Correlação à esquerda e Distribuição à direita. Prévia expansível abaixo.
+Rascunho criado antes do app: `entregas/rascunho-dashboard1.png`. Sidebar com tipos de conteúdo, seleção múltipla de variáveis, variável de intervalo, slider e opção de manter ausências. Área principal com Correlação à esquerda e Distribuição à direita. Prévia expansível abaixo.
 
 Variáveis: `release_year`, `imdb_rating`, `imdb_votes`, `tmdb_rating`, `tmdb_popularity`. Classe: `tipo_conteudo`. Perguntas: como os valores se distribuem, como se relacionam e como diferem entre filmes e séries?
 
