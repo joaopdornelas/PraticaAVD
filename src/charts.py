@@ -1,35 +1,40 @@
 import altair as alt
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
 from src.analytics import COLORS, LABELS
 
 
-def heatmap(data, variables):
-    order = [LABELS[v] for v in variables]
-    base = alt.Chart(data).encode(
-        x=alt.X('x:N', sort=order, title=None, axis=alt.Axis(labelAngle=-35, labelLimit=150)),
-        y=alt.Y('y:N', sort=order, title=None, axis=alt.Axis(labelLimit=150)),
-        tooltip=[alt.Tooltip('x:N', title='Variável'), alt.Tooltip('y:N', title='Variável'),
-                 alt.Tooltip('rho:Q', title='Spearman', format='.3f'), alt.Tooltip('n:Q', title='Pares válidos')],
-    )
-    background = base.mark_rect(color='#E5E7EB')
-    cells = base.transform_filter('isValid(datum.rho)').mark_rect().encode(
-        color=alt.Color('rho:Q', title='Spearman', scale=alt.Scale(domain=[-1, 0, 1], range=['#2563EB', '#FFFFFF', '#B20710']))
-    )
-    text = base.mark_text(fontSize=14).encode(
-        text='texto:N', color=alt.when('isValid(datum.rho) && abs(datum.rho) > 0.55').then(alt.value('white')).otherwise(alt.value('#202020')),
-    )
-    return (background + cells + text).properties(height=340).configure_view(stroke=None)
+def heatmap(matrix):
+    """Mesmo tipo de heatmap do notebook da EDA."""
+    fig, ax = plt.subplots(figsize=(6, 5))
+    labels = [LABELS[column] for column in matrix.columns]
+    sns.heatmap(matrix, annot=True, fmt='.2f', cmap='coolwarm',
+                vmin=-1, vmax=1, center=0, mask=matrix.isna(),
+                xticklabels=labels, yticklabels=labels, ax=ax)
+    ax.tick_params(axis='x', rotation=45)
+    ax.tick_params(axis='y', rotation=0)
+    fig.tight_layout()
+    return fig
 
 
-def histogram(data, variable, split=False, log=False):
-    title = f'log(1 + {LABELS[variable]})' if log else LABELS[variable]
-    y = alt.Y('percentual:Q', title='Títulos com valor no grupo (%)', stack=None) if split else alt.Y('quantidade:Q', title='Títulos', stack=None)
-    return alt.Chart(data).mark_bar(opacity=0.6 if split else 0.95).encode(
-        x=alt.X('inicio:Q', title=title, bin='binned'), x2='fim:Q', y=y,
-        color=alt.Color('grupo:N', title='Tipo', scale=alt.Scale(domain=list(COLORS), range=list(COLORS.values())), legend=alt.Legend() if split else None),
-        tooltip=[alt.Tooltip('grupo:N', title='Grupo'), alt.Tooltip('inicio:Q', title='Início', format='.2f'),
-                 alt.Tooltip('fim:Q', title='Fim', format='.2f'), alt.Tooltip('quantidade:Q', title='Títulos no intervalo'),
-                 alt.Tooltip('percentual:Q', title='% do grupo', format='.2f'), alt.Tooltip('n_grupo:Q', title='N do grupo')],
-    ).properties(height=340).configure_view(stroke=None)
+def histogram(df, variable, bins=25, split=False, log=False):
+    """Seaborn calcula os intervalos e as frequências, como na EDA."""
+    data = df[[variable, 'tipo_conteudo']].dropna(subset=[variable]).copy()
+    if log:
+        data[variable] = np.log1p(data[variable])
+    fig, ax = plt.subplots(figsize=(7, 5))
+    if split:
+        sns.histplot(data=data, x=variable, hue='tipo_conteudo', bins=bins,
+                     stat='percent', common_norm=False, common_bins=True,
+                     multiple='layer', palette=COLORS, alpha=0.5, ax=ax)
+        ax.get_legend().set_title('Tipo de conteúdo')
+    else:
+        sns.histplot(data=data, x=variable, bins=bins, color=COLORS['Filme'], ax=ax)
+    ax.set_xlabel(f'log(1 + {LABELS[variable]})' if log else LABELS[variable])
+    ax.set_ylabel('Títulos com valor no grupo (%)' if split else 'Títulos')
+    fig.tight_layout()
+    return fig
 
 
 def category_bar(data):
@@ -37,7 +42,7 @@ def category_bar(data):
     return alt.Chart(data).mark_bar(color='#B20710').encode(
         x=alt.X('titulos:Q', title='Títulos'),
         y=alt.Y('categoria:N', title=None, sort='-x', axis=alt.Axis(labelLimit=230)),
-        opacity=alt.when(selection).then(alt.value(1)).otherwise(alt.value(0.25)),
+        opacity=alt.condition(selection, alt.value(1), alt.value(0.25)),
         tooltip=[alt.Tooltip('categoria:N', title='Categoria'), alt.Tooltip('titulos:Q', title='Títulos')],
     ).add_params(selection).properties(height=350).configure_view(stroke=None)
 

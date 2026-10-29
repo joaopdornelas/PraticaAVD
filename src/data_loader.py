@@ -5,7 +5,7 @@ import streamlit as st
 DATA_PATH = Path(__file__).resolve().parents[1] / "data/clean/dataset.csv"
 REQUIRED = {
     "title", "tipo_conteudo", "release_year", "imdb_rating", "imdb_votes",
-    "tmdb_rating", "tmdb_popularity", "imdb_votes_log", "primary_genre", "primary_country",
+    "tmdb_rating", "tmdb_popularity", "primary_genre", "primary_country",
 }
 
 

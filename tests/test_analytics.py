@@ -1,7 +1,8 @@
 import unittest
 import numpy as np
 import pandas as pd
-from src.analytics import correlation_data, histogram_data, calculate_metrics, category_counts, select_categories, decade_counts
+import matplotlib.pyplot as plt
+from src.analytics import correlation_matrix, calculate_metrics, category_counts, select_categories, decade_counts
 from src.charts import category_bar, heatmap, histogram
 from src.data_loader import load_data
 
@@ -9,23 +10,26 @@ from src.data_loader import load_data
 class AnalyticsTest(unittest.TestCase):
     def test_pairwise_correlation_and_constant_values(self):
         df = pd.DataFrame({'release_year': [1, 2, 3, np.nan], 'imdb_rating': [3, 2, 1, 9], 'imdb_votes': [1, 1, 1, 1]})
-        result = correlation_data(df, ['release_year', 'imdb_rating', 'imdb_votes'])
-        pair = result[(result.x == 'Ano de lançamento') & (result.y == 'Nota IMDb')].iloc[0]
-        self.assertEqual(pair['n'], 3)
-        self.assertEqual(pair.rho, -1)
-        self.assertTrue(result.loc[result.x.eq('Votos IMDb'), 'rho'].isna().all())
-        heatmap(result, ['release_year', 'imdb_rating', 'imdb_votes']).to_dict(validate=True)
+        result = correlation_matrix(df, ['release_year', 'imdb_rating', 'imdb_votes'])
+        self.assertEqual(result.loc['release_year', 'imdb_rating'], -1)
+        self.assertTrue(result['imdb_votes'].isna().all())
+        fig = heatmap(result)
+        fig.canvas.draw()
+        plt.close(fig)
 
     def test_histograms_share_edges_and_preserve_counts(self):
         df = load_data()
         for log in [False, True]:
-            data = histogram_data(df, 'imdb_votes', 25, True, log)
-            self.assertEqual(data.quantidade.sum(), 5460)
-            self.assertTrue(np.allclose(data.groupby('grupo').percentual.sum(), 100))
-            parts = [p for _, p in data.groupby('grupo')]
-            self.assertEqual(parts[0].inicio.tolist(), parts[1].inicio.tolist())
-            histogram(data, 'imdb_votes', True, log).to_dict(validate=True)
-        self.assertTrue(histogram_data(df.iloc[:0], 'imdb_votes').empty)
+            fig = histogram(df, 'imdb_votes', 25, False, log)
+            self.assertEqual(sum(bar.get_height() for bar in fig.axes[0].patches), 5460)
+            plt.close(fig)
+            fig = histogram(df, 'imdb_votes', 25, True, log)
+            groups = fig.axes[0].containers
+            self.assertEqual(len(groups), 2)
+            for bars in groups:
+                self.assertAlmostEqual(sum(bar.get_height() for bar in bars), 100)
+            self.assertEqual([bar.get_x() for bar in groups[0]], [bar.get_x() for bar in groups[1]])
+            plt.close(fig)
 
     def test_metrics_and_cross_filter(self):
         df = load_data()

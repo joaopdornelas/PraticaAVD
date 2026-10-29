@@ -1,9 +1,9 @@
 """Aulas 21 e 22: exploração e indicadores da base histórica Netflix."""
-import hashlib
+import matplotlib.pyplot as plt
 import streamlit as st
 from src.data_loader import load_data
 from src.filters import filter_data
-from src.analytics import LABELS, GROUPS, correlation_data, histogram_data, calculate_metrics, category_counts, select_categories, decade_counts
+from src.analytics import LABELS, GROUPS, correlation_matrix, calculate_metrics, category_counts, select_categories, decade_counts
 from src.charts import heatmap, histogram, category_bar, decade_bar
 
 st.set_page_config(page_title="Netflix | Explorar o catálogo", layout="wide")
@@ -68,10 +68,14 @@ with tab1:
         elif df_filtrado.empty:
             st.info("Sem títulos para calcular a correlação.")
         else:
-            correlations = correlation_data(df_filtrado, variaveis)
-            st.altair_chart(heatmap(correlations, variaveis), width="stretch",
-                            alt="Matriz de correlação de Spearman das variáveis selecionadas")
-            st.caption("Spearman, de −1 a 1. Passe o cursor para consultar o número de pares válidos. ‘—’ indica menos de dois pares ou variável constante no par.")
+            correlations = correlation_matrix(df_filtrado, variaveis)
+            if correlations.isna().all().all():
+                st.info("Não há dados com variação suficiente para calcular a correlação.")
+            else:
+                fig = heatmap(correlations)
+                st.pyplot(fig, width="stretch")
+                plt.close(fig)
+            st.caption("Spearman, de −1 a 1. Células vazias indicam menos de dois pares válidos ou variável constante.")
             st.caption("Associação não demonstra causalidade. Cada par pode usar um conjunto diferente de títulos.")
     with col_distribuicao:
         st.subheader("Como os valores se distribuem?")
@@ -80,13 +84,13 @@ with tab1:
                                        format_func=LABELS.get, key="distribuicao")
             bins = st.slider("Quantidade de intervalos do histograma", 5, 60, 25, key="hist_bins")
             log = st.checkbox("Visualizar em log(1 + valor)", key="hist_log") if distribuicao in ['imdb_votes', 'tmdb_popularity'] else False
-            hist = histogram_data(df_filtrado, distribuicao, bins, separar_por_tipo, log)
-            if hist.empty:
+            n = int(df_filtrado[distribuicao].notna().sum())
+            if n == 0:
                 st.info("Não há valores disponíveis para o histograma neste recorte.")
             else:
-                st.altair_chart(histogram(hist, distribuicao, separar_por_tipo, log), width="stretch",
-                                alt="Histograma da variável selecionada, com cores por tipo quando solicitado")
-                n = int(df_filtrado[distribuicao].notna().sum())
+                fig = histogram(df_filtrado, distribuicao, bins, separar_por_tipo, log)
+                st.pyplot(fig, width="stretch")
+                plt.close(fig)
                 st.caption(f"{n} títulos com valor disponível; {len(df_filtrado)-n} sem valor ficam fora deste gráfico.")
                 if separar_por_tipo:
                     st.caption("Mesmos intervalos para os grupos. Cada grupo soma 100%, evitando confundir seu tamanho com o formato da distribuição.")
@@ -113,8 +117,8 @@ with tab2:
             st.info("Sem títulos para agrupar.")
         else:
             grouped = category_counts(df_filtrado, group)
-            digest = hashlib.sha1(','.join(map(str, df_filtrado.index)).encode()).hexdigest()[:12]
-            chart_key = f"categories_{group}_{digest}_{st.session_state.get('selection_version', 0)}"
+            # Uma mudança nos filtros cria uma nova seleção, sem carregar cliques antigos.
+            chart_key = f"categories_{group}_{tipos}_{filtro}_{intervalo}_{manter_ausentes}_{st.session_state.get('selection_version', 0)}"
             event = st.altair_chart(category_bar(grouped), key=chart_key, on_select="rerun",
                                     selection_mode=['categorias'], width="stretch",
                                     alt="Barras selecionáveis: clique para filtrar os indicadores e o gráfico por década")

@@ -58,6 +58,8 @@ Barras por categoria permitem comparar frequências e selecionar recortes. As ba
 
 Vermelho `#B20710` como destaque ligado ao tema Netflix; azul `#2563EB` para distinguir séries; neutros `#202020`, `#FAFAFA` e cinza para texto, fundo e contexto. A matriz usa azul, branco e vermelho para a direção da correlação, com escala fixa de −1 a 1. Legendas e rótulos complementam as cores.
 
+O Dashboard 1 reaproveita os gráficos Seaborn da EDA, exibidos com `st.pyplot` e recalculados pelos filtros. O Dashboard 2 usa Altair para a seleção nas barras, como orienta o roteiro.
+
 ## Ausências e limites
 
 - Recorte vazio: contagem 0; proporções e mediana indisponíveis (—).

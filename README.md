@@ -16,7 +16,7 @@ Nas próximas execuções, basta o último comando. No macOS/Linux, use `python3
 
 ## Os dois dashboards
 
-**Correlação e distribuição:** matriz de Spearman e histogramas interativos em Altair. Os filtros recalculam ambos. A matriz mostra o número de pares válidos no hover e indica coeficientes indefinidos. Na comparação por tipo, os histogramas usam intervalos iguais e percentuais por grupo. Votos e popularidade podem ser visualizados em log(1 + valor), sem modificar os dados.
+**Correlação e distribuição:** matriz de Spearman e histogramas com Seaborn, reaproveitando a abordagem da EDA, permitida no Dashboard 1. Os gráficos são exibidos como imagens e recalculados pelos filtros. Células vazias indicam correlações indefinidas. Na comparação por tipo, o Seaborn calcula intervalos iguais e percentuais por grupo. Votos e popularidade podem ser visualizados em log(1 + valor), sem modificar os dados.
 
 **Indicadores do catálogo:** quatro cartões (total, cobertura IMDb, mediana IMDb e participação de séries). Barras agrupadas por gênero, país ou tipo permitem selecionar categorias e atualizar os cartões e o gráfico de lançamentos por década. Clique seleciona, Shift + clique seleciona várias categorias, e duplo clique ou o botão limpa. Os filtros gerais afetam as duas abas; seleção das barras refina somente a segunda.
 
@@ -25,7 +25,7 @@ Nas próximas execuções, basta o último comando. No macOS/Linux, use `python3
 - `notebooks/eda.ipynb`: cópia exata do Colab original do aluno, preservada conforme o roteiro atualizado. O carregamento original usa upload manual.
 - `notebooks/eda-com-downloads.ipynb`: versão adaptada da EDA do aluno para execução local/Colab e exportação. Execute todas as células para gerar `data/raw/dataset.csv` e `data/clean/dataset.csv`.
 - `notebooks/arquivo-eda-original.ipynb`: referência da professora, mantida.
-- `notebooks/metricas.ipynb`: planejamento, fórmulas, conferências e visuais prévios do Dashboard 2.
+- `notebooks/metricas.ipynb`: planejamento, cálculos diretos com pandas, comparação com as funções do app e visuais do Dashboard 2.
 - `data/raw/dataset.csv`: original local, incluído no ZIP, ignorado pelo Git como no modelo.
 - `data/clean/dataset.csv`: base usada pelo aplicativo e versionada. 7.786 linhas e 42 colunas.
 
@@ -41,7 +41,6 @@ CSV original fornecido pelo aluno: `netflix_content_intelligence_combined.csv`. 
 - `entregas/justificativa-metricas.md`: variáveis, finalidade, público, decisões, fórmulas e limites dos quatro indicadores.
 - `prompts/`: somente material relacionado ao uso de IA.
 - `ROTEIRO.md` e `ALTAIR-CROSSFILTER.md`: guias atualizados da professora.
-- `VALIDACAO.md`: verificações e situação de entrega.
 
 ## Testar
 
@@ -51,4 +50,4 @@ CSV original fornecido pelo aluno: `netflix_content_intelligence_combined.csv`. 
 
 ## Publicação
 
-Repositório: https://github.com/joaopdornelas/PraticaAVD. O aluno autorizou o commit e o envio da parte 2 ao GitHub em 27/10/2026. O deploy no Streamlit Community Cloud é a etapa da Aula 23. O aluno ainda deve preencher seu nome e registrar sua revisão na declaração de IA.
+Repositório: https://github.com/joaopdornelas/PraticaAVD. A versão da parte 2 foi enviada em 27/10/2026. A revisão de 28/10/2026 simplifica os gráficos do Dashboard 1 e explicita os cálculos das métricas no notebook. O deploy no Streamlit Community Cloud é a etapa da Aula 23. O aluno ainda deve registrar sua revisão na declaração de IA.
