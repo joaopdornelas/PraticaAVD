@@ -16,6 +16,7 @@ O registro reúne dúvidas e revisões do aluno, pedidos de implementação e pr
 - **Nome completo:** João Pedro Rodrigues.
 - **E-mail:** jprda@cesar.school
 - **Repositório:** https://github.com/joaopdornelas/PraticaAVD
+- **Aplicativo publicado:** https://praticaavd-hkc3krmurmwykzel3f98ae.streamlit.app/
 - **Data de entrega:** ____ / ____ / ________
 
 ## 2. Diretrizes (leiam antes de usar qualquer ferramenta)
@@ -139,7 +140,7 @@ Na dúvida sobre se um uso é permitido, perguntem à professora antes de usar. 
 - **Finalidade e enquadramento:** Tutoria, explicação de erros e apoio ao versionamento.
 - **Resumo do que foi pedido:** Pedi para aprender do zero a instalar e usar o Git. Tirei dúvidas sobre nome e e-mail, commits, conexão ao GitHub, envio dos arquivos e conflito no README. Executei comandos e compartilhei as saídas do terminal para receber orientação.
 - **O que foi aproveitado e modificado:** Explicações sobre commit e push, orientação para resolver erros e ações de versionamento autorizadas por mim. Também recebi instruções para executar o app no VS Code.
-- **Como foi verificado:** As saídas que enviei mostram execução de git init, git status e tentativas de push, incluindo mensagens de erro e conflito. Publicação e teste do app público continuam pendentes.
+- **Como foi verificado:** As saídas que enviei mostram execução de git init, git status e tentativas de push, incluindo mensagens de erro e conflito. O aplicativo foi publicado, e o endereço informado foi adicionado ao README. Posteriormente, confirmei na conversa que realizei o teste do app público em janela anônima.
 - **Link ou anexo da conversa:** referência comum indicada no início desta seção.
 
 ### Uso nº 7 - Conclusão da implementação da parte 3
@@ -172,7 +173,7 @@ Na dúvida sobre se um uso é permitido, perguntem à professora antes de usar. 
 - **Finalidade e enquadramento:** Auditoria técnica, interpretação dos dados, propostas analíticas e implementação.
 - **Resumo do que foi pedido:** Pedi uma avaliação do atendimento aos requisitos, da qualidade dos dados e da utilidade dos gráficos. Perguntei se as mudanças manteriam as exigências da professora e depois autorizei a implementação. Também solicitei o teste em janela anônima.
 - **O que foi aproveitado e modificado:** Logaritmo inicialmente ativado nos histogramas de votos e popularidade. No Dashboard 2, substituição dos gráficos por década e de medianas por cobertura IMDb por categoria e boxplot por tipo. O assistente propôs e implementou essas mudanças; os quatro indicadores e o dataset foram preservados.
-- **Como foi verificado:** O assistente executou dez testes com sucesso e oito células do notebook sem erros, com três gráficos. Foram conferidas as 5.460 notas do boxplot e os denominadores da cobertura. O teste real em janela anônima não foi concluído. Erros de associação entre títulos e avaliações continuam pendentes.
+- **Como foi verificado:** O assistente executou dez testes com sucesso e oito células do notebook sem erros, com três gráficos. Foram conferidas as 5.460 notas do boxplot e os denominadores da cobertura. A tentativa de teste em janela anônima pelo assistente foi bloqueada. Posteriormente, realizei o teste em janela anônima e confirmei sua realização na conversa. O aplicativo já foi publicado no endereço indicado na identificação. Erros de associação entre títulos e avaliações continuam pendentes.
 - **Link ou anexo da conversa:** referência comum indicada no início desta seção.
 
 ## 6. Trechos de código feitos com apoio de IA
@@ -184,7 +185,7 @@ O esqueleto assistido é previsto na atividade. O detalhamento permanece nas Se�
 | app.py (esqueleto) | Sim | Estrutura, componentes, filtros e organização das abas. |
 | Dashboard 1 | Sim | Filtros, correlação, histogramas, Seaborn e depuração. |
 | Dashboard 2 | Sim | Cálculos, Altair, seleção e propostas analíticas declaradas no registro. |
-| Deploy / configuração | Sim, parcial | Configuração e orientação. Publicação e teste anônimo pendentes. |
+| Deploy / configuração | Sim, parcial | Configuração e orientação. Aplicativo publicado, com link no README. Teste em janela anônima realizado pelo aluno, conforme confirmação na conversa. |
 | Notebooks e testes | Sim | Cálculos explícitos, código de gráficos e verificações automáticas. |
 | Skill oficial Streamlit | A confirmar | Não usada nesta etapa; confirmar consulta/uso nas etapas anteriores. |
 

@@ -4,7 +4,7 @@ Aplicação das Aulas 21, 22 e 23 de Análise e Visualização de Dados (2026.2)
 
 ## Aplicativo publicado
 
-**Publicação pendente.** O endereço público será incluído aqui após a publicação no Streamlit Community Cloud e a verificação do acesso em janela anônima.
+**Link do app:** [Abrir aplicativo no Streamlit](https://praticaavd-hkc3krmurmwykzel3f98ae.streamlit.app/).
 
 [Repositório do projeto](https://github.com/joaopdornelas/PraticaAVD) · [Modelo da atividade](https://github.com/mfal-school/AVD-20262-pratica-streamlit)
 
@@ -106,15 +106,15 @@ No Streamlit Community Cloud, selecionar o repositório `joaopdornelas/PraticaAV
 
 Após publicar, conferir:
 
-- [ ] Aplicativo acessível em janela anônima.
+- [x] Teste de acesso ao aplicativo em janela anônima realizado pelo aluno.
 - [ ] Todos os widgets respondem e atualizam os resultados.
 - [ ] As duas abas carregam.
 - [ ] Dashboard 1 mostra um histograma por variável selecionada.
 - [ ] Dashboard 2 mostra quatro métricas e três visuais, com seleção das barras funcionando.
 - [ ] Repositório e aplicativo não expõem senhas, tokens ou outros dados sensíveis.
-- [ ] Link público real incluído no início deste README.
+- [x] Link público real incluído no início deste README.
 - [ ] Repositório público com notebooks, `app.py`, `entregas/` e `prompts/` completos.
 - [ ] Público, métricas, justificativas e terceiro visual definidos pelo aluno.
 - [ ] Declaração oficial em PDF preenchida e assinada, com reflexão individual de 10 a 15 linhas e identificação dos blocos de código assistidos por IA.
 
-Os itens de publicação permanecem pendentes até a conferência no endereço público.
+Os demais itens permanecem pendentes até a conferência no endereço público.
