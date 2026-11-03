@@ -1,52 +1,29 @@
-# entregas/
+# Entregas da prática Streamlit
 
-Artefatos de entrega que não são sobre uso de IA (isso fica em [`prompts/`](../prompts)). Cada arquivo tem uma função específica na correção. Os rascunhos aceitam `.jpg` ou `.png`. Tudo desta pasta, incluindo as entregas do Dashboard 2 (rascunho + justificativa), deve estar pronto até a Aula 22; a Aula 23 é para finalizar a implementação, fazer o deploy e os ajustes finais.
+Esta pasta contém os rascunhos e as justificativas exigidos pela atividade. Os registros de uso de IA ficam em [`prompts/`](../prompts).
 
-| Arquivo                      | Quando    | O que é                                                                                      |
-|-------------------------------|-----------|-----------------------------------------------------------------------------------------------|
-| `rascunho-dashboard1.jpg`/`.png`     | Aula 21   | Foto do rascunho do layout do Dashboard 1, feito antes de codar                               |
-| `rascunho-dashboard2.jpg`/`.png`     | Aula 22   | Mesma ideia, para o Dashboard 2 — desenhado só depois de definir widgets, variáveis e métricas |
-| `justificativa-metricas.md`   | Aula 22   | Por que cada métrica/KPI do Dashboard 2 foi escolhida e o que ela comunica ao público-alvo     |
+| Arquivo | Conteúdo |
+|---|---|
+| [`rascunho-dashboard1.png`](rascunho-dashboard1.png) | Painel lateral, mapa de calor e um histograma por variável selecionada; log(1 + valor) inicialmente ativado apenas para votos e popularidade |
+| [`rascunho-dashboard2.jpg`](rascunho-dashboard2.jpg) | Quatro métricas e três visuais: contagem por categoria, cobertura IMDb por categoria e boxplot das notas por tipo |
+| [`justificativa-metricas.md`](justificativa-metricas.md) | Rascunho anterior, preservado com a definição e redação individual das justificativas ainda pendentes |
 
-## Checklist — Aula 21
+Os rascunhos organizam a etapa final (Aula 23) e incluem a revisão gráfica aprovada na conversa. A cobertura IMDb substitui o gráfico por década; o boxplot substitui as barras da mediana por tipo. As justificativas individuais e a definição do público ainda precisam ser registradas pelo aluno. São esquemas de layout com gráficos ilustrativos, não capturas do aplicativo ou resultados analíticos. O dataset permanece intacto, inclusive as correspondências entre fontes que ainda precisam ser corrigidas.
 
-- [ ] `rascunho-dashboard1.jpg`/`.png`
+## Conteúdo da pasta
 
-## Checklist — Aula 22
+- [x] Rascunho do Dashboard 1.
+- [x] Rascunho do Dashboard 2.
+- [ ] Revisão e redação individual das justificativas das quatro métricas.
+- [ ] Justificativa individual dos três visuais do Dashboard 2 e confirmação do público-alvo.
 
-- [ ] `rascunho-dashboard2.jpg`/`.png`
-- [ ] `justificativa-metricas.md` preenchido (não só criado vazio)
+## Conferência da entrega pública
 
-## Checklist — entrega final (Aula 23)
+- [ ] Aplicativo publicado e testado em janela anônima.
+- [ ] Widgets e abas conferidos no aplicativo publicado.
+- [ ] Ausência de dados sensíveis verificada no repositório e na aplicação.
+- [ ] Link público real registrado no README principal.
 
-- [ ] Os dois rascunhos
-- [ ] `justificativa-metricas.md` completo
+O preenchimento desta pasta não substitui a conferência da aplicação publicada.
 
-## Modelo de `justificativa-metricas.md`
-
-Cada métrica indica **a variável** a que se refere, **o que mede**, **por que foi escolhida** e **o que comunica** a um público que não precisa captar as nuances da variável.
-
-```markdown
-# Justificativa das métricas — Dashboard 2
-
-## Métrica 1: <nome>
-- **Variável:**
-- **O que mede:**
-- **Por que foi escolhida:**
-- **O que comunica ao público-alvo:**
-```
-
-### Exemplo preenchido
-
-```markdown
-## Métrica: Distribuição do colesterol em relação à mediana
-- **Variável:** `chol` (colesterol sérico, mg/dl)
-- **O que mede:** a proporção de pessoas da amostra abaixo, em torno e acima da mediana de `chol`,
-  junto de algumas estatísticas descritivas (média, mediana, mínimo, máximo, desvio padrão).
-  "Em torno" = dentro de ±10% da mediana (defina e explicite a faixa que você usar).
-- **Por que foi escolhida:** dá uma visão simplificada e direta da variável, sem exigir leitura
-  de histograma ou boxplot.
-- **O que comunica ao público-alvo:** como está distribuída a amostra de forma resumida
-  (ex.: "metade das pessoas está acima de X mg/dl"), para quem não consegue captar as
-  nuances da variável.
-```
+O template oficial exige `prompts/DECLARACAO_IA.pdf` preenchido e assinado pelo aluno. O apoio técnico de IA não substitui a escolha e a justificativa individual das métricas nem a reflexão pessoal.

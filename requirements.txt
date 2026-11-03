@@ -1,3 +1,4 @@
+# [IA] ChatGPT/Codex - dependências utilizadas pelo app e pelos notebooks.
 streamlit>=1.66,<2.0
 pandas>=2.2,<3.0
 numpy>=2.0,<3.0

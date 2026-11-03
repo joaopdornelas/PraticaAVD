@@ -1,4 +1,5 @@
 """Execute: python -m unittest discover -s tests -v"""
+# [IA] ChatGPT/Codex - verificações automatizadas dos filtros, indicadores e estados vazios.
 import unittest
 from pathlib import Path
 from streamlit.testing.v1 import AppTest
@@ -11,16 +12,18 @@ class FiltersTest(unittest.TestCase):
         at = AppTest.from_file(str(Path(__file__).resolve().parents[1] / 'app.py'), default_timeout=60).run()
         self.assertEqual(len(at.exception), 0)
         self.assertEqual(len(at.tabs), 2)
+        self.assertEqual(sum(el.type == 'image' for el in at.tabs[0]), 6)
+        self.assertEqual(sum(el.type == 'vega_lite_chart' for el in at.tabs[1]), 3)
         self.assertEqual(at.metric[0].value, '7.786')
         self.assertEqual(at.metric[1].value, '70,1%')
         self.assertEqual(at.metric[2].value, '6,5')
+        self.assertTrue(at.checkbox(key='hist_log').value)
         at.multiselect(key='tipos').set_value(['Série']).run()
         self.assertEqual(at.metric[0].value, '2.410')
         self.assertEqual(at.metric[3].value, '100,0%')
         at.multiselect(key='variaveis').set_value(['imdb_rating', 'imdb_votes']).run()
         at.toggle(key='separar_por_tipo').set_value(True).run()
-        at.selectbox(key='distribuicao').set_value('imdb_votes').run()
-        at.checkbox(key='hist_log').check().run()
+        at.checkbox(key='hist_log').uncheck().run()
         at.selectbox(key='kpi_group').set_value('primary_country').run()
         at.button(key='clear_categories').click().run()
         self.assertEqual(len(at.exception), 0)
@@ -46,6 +49,7 @@ class FiltersTest(unittest.TestCase):
         self.assertEqual(len(at.exception), 0)
         self.assertGreaterEqual(len(at.warning), 2)
         at.multiselect(key='variaveis').set_value(['imdb_rating']).run()
+        self.assertEqual(sum(el.type == 'image' for el in at.tabs[0]), 1)
         at.selectbox(key='filtro').set_value('imdb_rating').run()
         at.slider(key='intervalo_imdb_rating').set_value((8.0, 9.0)).run()
         at.checkbox(key='manter_ausentes').uncheck().run()

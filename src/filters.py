@@ -1,3 +1,4 @@
+# [IA] ChatGPT/Codex - filtro por tipo e intervalo, com opção para preservar ausências.
 def filter_data(df, tipos, variavel, intervalo, manter_ausentes=True):
     """Aplica o intervalo sem remover ausências implicitamente nem editar a base."""
     mask = df["tipo_conteudo"].isin(tipos)

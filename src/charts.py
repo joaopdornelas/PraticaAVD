@@ -1,3 +1,4 @@
+# [IA] ChatGPT/Codex - imports para desenhar os gráficos.
 import altair as alt
 import matplotlib.pyplot as plt
 import numpy as np
@@ -5,6 +6,7 @@ import seaborn as sns
 from src.analytics import COLORS, LABELS
 
 
+# [IA] ChatGPT/Codex - sintaxe e formatação do mapa de calor Seaborn.
 def heatmap(matrix):
     """Mesmo tipo de heatmap do notebook da EDA."""
     fig, ax = plt.subplots(figsize=(6, 5))
@@ -18,6 +20,7 @@ def heatmap(matrix):
     return fig
 
 
+# [IA] ChatGPT/Codex - histogramas, intervalos comuns e transformação opcional de escala.
 def histogram(df, variable, bins=25, split=False, log=False):
     """Seaborn calcula os intervalos e as frequências, como na EDA."""
     data = df[[variable, 'tipo_conteudo']].dropna(subset=[variable]).copy()
@@ -37,6 +40,7 @@ def histogram(df, variable, bins=25, split=False, log=False):
     return fig
 
 
+# [IA] ChatGPT/Codex - sintaxe Altair para barras com seleção de categorias.
 def category_bar(data):
     selection = alt.selection_point(name='categorias', fields=['categoria'], clear='dblclick')
     return alt.Chart(data).mark_bar(color='#B20710').encode(
@@ -47,10 +51,33 @@ def category_bar(data):
     ).add_params(selection).properties(height=350).configure_view(stroke=None)
 
 
-def decade_bar(data):
-    return alt.Chart(data).mark_bar().encode(
-        x=alt.X('decada:O', title='Década de lançamento', axis=alt.Axis(labelAngle=-35)),
-        y=alt.Y('titulos:Q', title='Títulos'),
-        color=alt.Color('tipo_conteudo:N', title='Tipo', scale=alt.Scale(domain=['Filme', 'Série'], range=[COLORS['Filme'], COLORS['Série']])),
-        tooltip=[alt.Tooltip('decada:O', title='Década'), alt.Tooltip('tipo_conteudo:N', title='Tipo'), alt.Tooltip('titulos:Q', title='Títulos')],
+# [IA] ChatGPT/Codex - barras de cobertura, com percentual e denominadores disponíveis.
+def coverage_bar(data):
+    base = alt.Chart(data).encode(
+        x=alt.X('cobertura:Q', title='Títulos com nota IMDb (%)',
+                scale=alt.Scale(domain=[0, 1]), axis=alt.Axis(format='.0%')),
+        y=alt.Y('categoria:N', title=None, sort=data['categoria'].tolist(),
+                axis=alt.Axis(labelLimit=230)),
+        tooltip=[alt.Tooltip('categoria:N', title='Categoria'),
+                 alt.Tooltip('avaliados:Q', title='Com nota IMDb'),
+                 alt.Tooltip('total:Q', title='Total de títulos'),
+                 alt.Tooltip('cobertura:Q', title='Cobertura', format='.1%')],
+    )
+    bars = base.mark_bar(color=COLORS['Série'])
+    labels = base.mark_text(align='left', dx=4).encode(
+        text=alt.Text('cobertura:Q', format='.1%'))
+    return (bars + labels).properties(height=350).configure_view(stroke=None)
+
+
+# [IA] ChatGPT/Codex - boxplot com todas as notas disponíveis, sem amostragem ou remoção de extremos.
+def rating_boxplot(df):
+    data = df[['tipo_conteudo', 'imdb_rating']].dropna(subset=['imdb_rating'])
+    # Envia somente duas colunas. Dados explícitos preservam as 5.460 notas da base,
+    # inclusive no notebook, cujo limite padrão para DataFrames é de 5.000 linhas.
+    source = alt.Data(values=data.to_dict('records'))
+    return alt.Chart(source).mark_boxplot(extent=1.5, size=70).encode(
+        x=alt.X('tipo_conteudo:N', title='Tipo de conteúdo', axis=alt.Axis(labelAngle=0)),
+        y=alt.Y('imdb_rating:Q', title='Nota IMDb', scale=alt.Scale(domain=[0, 10])),
+        color=alt.Color('tipo_conteudo:N', title='Tipo', scale=alt.Scale(
+            domain=['Filme', 'Série'], range=[COLORS['Filme'], COLORS['Série']])),
     ).properties(height=350).configure_view(stroke=None)

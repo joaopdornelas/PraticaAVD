@@ -1,3 +1,4 @@
+# [IA] ChatGPT/Codex - cores e fonte da interface.
 [theme]
 base = "light"
 primaryColor = "#B20710"
@@ -6,5 +7,6 @@ secondaryBackgroundColor = "#F0F0F0"
 textColor = "#202020"
 font = "sans serif"
 
+# [IA] ChatGPT/Codex - desativar o envio de estatísticas de uso.
 [browser]
 gatherUsageStats = false

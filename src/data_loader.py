@@ -1,3 +1,4 @@
+# [IA] ChatGPT/Codex - caminho local e lista das colunas necessárias ao aplicativo.
 from pathlib import Path
 import pandas as pd
 import streamlit as st
@@ -9,6 +10,7 @@ REQUIRED = {
 }
 
 
+# [IA] ChatGPT/Codex - leitura do CSV com cache e mensagens de erro.
 @st.cache_data(max_entries=2)
 def load_data(path=DATA_PATH):
     """Lê somente o dataset tratado; caminho independente do diretório atual."""
